@@ -56,13 +56,7 @@ app.OnExecuteAsync(async cancellationToken =>
     }
     catch (Exception e)
     {
-        ConsoleLogger.Error(e.Message);
-
-        if (e.InnerException != null)
-        {
-            ConsoleLogger.Error(e.InnerException.Message);
-        }
-
+        ConsoleLogger.Exception(e);
         Environment.Exit(1);
     }
 });
