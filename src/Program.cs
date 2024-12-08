@@ -20,7 +20,8 @@ app.OnExecuteAsync(async cancellationToken =>
         {
             Device = appConfiguration.Device,
             // SensorTypes = [SensorType.BMP280, SensorType.DHT22],
-            SensorTypes = [SensorType.Si7021, SensorType.BME280],
+            // SensorTypes = [SensorType.Si7021, SensorType.BME280],
+            SensorTypes = [SensorType.Sht4x],
             IntervalSeconds = appConfiguration.IntervalSeconds,
             MinimumDataPoints = appConfiguration.MinimumDataPoints,
             InfluxDbUrl = appConfiguration.InfluxDbUrl,

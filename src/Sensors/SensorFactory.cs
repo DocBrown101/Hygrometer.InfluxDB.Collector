@@ -14,13 +14,14 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
                     SensorType.BME280 => [new Bme280SensorReader()],
                     SensorType.BMP280 => [new Bmp280SensorReader()],
                     SensorType.DHT22 => [new Dht22SensorReader()],
+                    SensorType.Sht4x => [new Sht4xSensorReader()],
                     SensorType.Si7021 => [new Si7021SensorReader()],
                     _ => throw new ArgumentException("Not supported!"),
                 };
             }
             catch
             {
-                ConsoleLogger.Error($"SensorReader");
+                ConsoleLogger.Error($"SensorFactory for {sensorType}");
                 throw;
             }
         }
