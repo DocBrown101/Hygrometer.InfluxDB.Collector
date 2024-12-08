@@ -31,7 +31,7 @@ app.OnExecuteAsync(async cancellationToken =>
             InfluxDbAuthenticateToken = appConfiguration.InfluxDbAuthenticateToken
         };
 
-        ConsoleLogger.Info("Current Version: 1.0.0");
+        ConsoleLogger.Info("Current Version: 1.1.0");
         ConsoleLogger.Debug($"Current output setting: {appConfiguration.OutputSetting}");
         ConsoleLogger.Debug($"InfluxDb {config.InfluxDbUrl}");
         ConsoleLogger.Debug($"Interval {config.IntervalSeconds} seconds");
