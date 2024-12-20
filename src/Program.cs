@@ -19,9 +19,7 @@ app.OnExecuteAsync(async cancellationToken =>
         var config = new MetricsConfiguration()
         {
             Device = appConfiguration.Device,
-            // SensorTypes = [SensorType.BMP280, SensorType.DHT22],
-            // SensorTypes = [SensorType.Si7021, SensorType.BME280],
-            SensorTypes = [SensorType.Sht4x],
+            SensorTypes = appConfiguration.GetSensorTypes(),
             IntervalSeconds = appConfiguration.IntervalSeconds,
             MinimumDataPoints = appConfiguration.MinimumDataPoints,
             InfluxDbUrl = appConfiguration.InfluxDbUrl,
@@ -31,12 +29,12 @@ app.OnExecuteAsync(async cancellationToken =>
             InfluxDbAuthenticateToken = appConfiguration.InfluxDbAuthenticateToken
         };
 
-        ConsoleLogger.Info("Current Version: 1.1.0");
+        ConsoleLogger.Info("Current Version: 1.2.0");
         ConsoleLogger.Debug($"Current output setting: {appConfiguration.OutputSetting}");
         ConsoleLogger.Debug($"InfluxDb {config.InfluxDbUrl}");
         ConsoleLogger.Debug($"Interval {config.IntervalSeconds} seconds");
         ConsoleLogger.Debug($"MinimumDataPoints {config.MinimumDataPoints}");
-        ConsoleLogger.Debug($"Sensor {config.SensorTypes}");
+        ConsoleLogger.Debug($"Sensor count {config.SensorTypes.Count}");
 
         var metricsCompositor = new MetricsCompositor(SensorFactory.GetSensors(config.SensorTypes), config);
 

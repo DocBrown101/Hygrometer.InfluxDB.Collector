@@ -1,5 +1,7 @@
 ﻿namespace Hygrometer.InfluxDB.Collector.Model
 {
+    using System.Collections.Generic;
+
     public class MetricsConfiguration
     {
         public string Device { get; set; }
@@ -18,6 +20,6 @@
 
         public int MinimumDataPoints { get; set; }
 
-        public SensorType[] SensorTypes { get; set; }
+        public IList<SensorType> SensorTypes { get; set; }
     }
 }

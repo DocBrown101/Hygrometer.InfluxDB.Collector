@@ -1,6 +1,8 @@
 ﻿namespace Hygrometer.InfluxDB.Collector
 {
     using McMaster.Extensions.CommandLineUtils;
+    using System;
+    using System.Collections.Generic;
 
     internal class AppConfiguration
     {
@@ -16,6 +18,7 @@
         public string InfluxDbAuthenticateToken => this.influxDbAuthenticateToken.ParsedValue;
 
         private readonly CommandOption<OutputSettingEnum> outputSetting;
+        private readonly CommandOption sensors;
         private readonly CommandOption<string> device;
         private readonly CommandOption<int> intervalSeconds;
         private readonly CommandOption<int> minimumDataPoints;
@@ -31,6 +34,8 @@
             this.outputSetting = app.Option<OutputSettingEnum>("-o|--output", "Console or Influx.", CommandOptionType.SingleValue);
             this.outputSetting.DefaultValue = OutputSettingEnum.Console;
 
+            this.sensors = app.Option("-s|--sensor <SENSOR>", "All Sensors: BME280, BMP280, DHT22, Sht4x and Si7021", CommandOptionType.MultipleValue);
+
             this.device = app.Option<string>("-d|--device", "InfluxDB Tag.", CommandOptionType.SingleValue);
             this.device.DefaultValue = "Solar battery";
 
@@ -40,7 +45,7 @@
             this.minimumDataPoints = app.Option<int>("--minimumDataPoints", "Minimum number of data points for transmission.", CommandOptionType.SingleValue).Accepts(v => v.Range(1, 100));
             this.minimumDataPoints.DefaultValue = 2;
 
-            this.debugOutput = app.Option<bool>("--debugOutput", "Any debug output?", CommandOptionType.SingleValue);
+            this.debugOutput = app.Option<bool>("--debugOutput", "Any debug output?", CommandOptionType.NoValue);
             this.debugOutput.DefaultValue = false;
 
             this.influxDbUrl = app.Option<string>("--influxDbUrl", "The InfluxDb Url. E.g. http://192.168.0.220:8088", CommandOptionType.SingleValue);
@@ -53,6 +58,21 @@
             this.influxDbMeasurement.DefaultValue = "environment";
             this.influxDbAuthenticateToken = app.Option<string>("--influxDbToken", "The InfluxDb Token.", CommandOptionType.SingleValue);
             this.influxDbAuthenticateToken.DefaultValue = "cx8rDqWJ3FrDhCei9onSGpndAQzEhSYPSjApXzCJK40hUIY6rYro_yrav18JNalQF25eBG3baR6fys9WPQio6w==";
+        }
+
+        public IList<SensorType> GetSensorTypes()
+        {
+            var parsedSensors = new List<SensorType>();
+
+            foreach (var sensor in this.sensors.Values)
+            {
+                if (Enum.TryParse(sensor, true, out SensorType sensorType))
+                {
+                    parsedSensors.Add(sensorType);
+                }
+            }
+
+            return parsedSensors;
         }
     }
 }

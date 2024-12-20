@@ -5,7 +5,19 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
 {
     public static class SensorFactory
     {
-        public static IList<ISensorReader> GetSensor(SensorType sensorType)
+        public static IList<ISensorReader> GetSensors(IList<SensorType> sensorTypes)
+        {
+            var sensorList = new List<ISensorReader>();
+
+            foreach (SensorType sensorType in sensorTypes)
+            {
+                sensorList.AddRange(GetSensor(sensorType));
+            }
+
+            return sensorList;
+        }
+
+        private static IList<ISensorReader> GetSensor(SensorType sensorType)
         {
             try
             {
@@ -24,18 +36,6 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
                 ConsoleLogger.Error($"SensorFactory for {sensorType}");
                 throw;
             }
-        }
-
-        public static IList<ISensorReader> GetSensors(IList<SensorType> sensorTypes)
-        {
-            var sensorList = new List<ISensorReader>();
-
-            foreach (SensorType sensorType in sensorTypes)
-            {
-                sensorList.AddRange(GetSensor(sensorType));
-            }
-
-            return sensorList;
         }
     }
 }
