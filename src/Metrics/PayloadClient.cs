@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Hygrometer.InfluxDB.Collector.Model;
+﻿using Hygrometer.InfluxDB.Collector.Model;
 using InfluxDB.Client;
 using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Writes;
+using System;
+using System.Collections.Generic;
 
 namespace Hygrometer.InfluxDB.Collector.Metrics
 {
@@ -28,38 +27,31 @@ namespace Hygrometer.InfluxDB.Collector.Metrics
             this.influxDBClient = new InfluxDBClient(builder.Build());
         }
 
-        public async Task AddAndTrySendPayload(SensorData sensorData)
+        public void AddAndTrySendPayload(SensorData sensorData)
         {
-            await Task.CompletedTask;
-
             this.AddPayload(sensorData);
             this.TrySendPayload();
         }
 
         private void AddPayload(SensorData sensorData)
         {
-            var payloadDateTime = DateTime.UtcNow;
+            var pointData = PointData.Measurement($"{this.configuration.InfluxDbMeasurement}")
+                .Tag("device", this.configuration.Device)
+                .Tag("sensor", sensorData.SensorType.ToString())
+                .Field("temperature_C", sensorData.DegreesCelsius)
+                .Timestamp(DateTime.UtcNow, WritePrecision.Ms);
 
-            switch (sensorData.SensorType)
+            if (sensorData.Hectopascals.HasValue)
             {
-                case SensorType.BME280:
-                case SensorType.BMP280:
-                    this.pointDataList.Add(PointData.Measurement($"{this.configuration.InfluxDbMeasurement}")
-                        .Tag("device", this.configuration.Device)
-                        .Tag("sensor", sensorData.SensorType.ToString())
-                        .Field("temperature_C", sensorData.DegreesCelsius)
-                        .Field("hectopascal_H", sensorData.Hectopascals)
-                        .Timestamp(payloadDateTime, WritePrecision.Ms));
-                    break;
-                case SensorType.DHT22:
-                    this.pointDataList.Add(PointData.Measurement($"{this.configuration.InfluxDbMeasurement}")
-                        .Tag("device", this.configuration.Device)
-                        .Tag("sensor", sensorData.SensorType.ToString())
-                        .Field("temperature_C", sensorData.DegreesCelsius)
-                        .Field("humidity_P", sensorData.HumidityInPercent)
-                        .Timestamp(payloadDateTime, WritePrecision.Ms));
-                    break;
+                pointData = pointData.Field("hectopascal_H", sensorData.Hectopascals.Value);
             }
+
+            if (sensorData.HumidityInPercent.HasValue)
+            {
+                pointData = pointData.Field("humidity_P", sensorData.HumidityInPercent.Value);
+            }
+
+            this.pointDataList.Add(pointData);
         }
 
         private void TrySendPayload()

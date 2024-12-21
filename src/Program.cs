@@ -29,7 +29,7 @@ app.OnExecuteAsync(async cancellationToken =>
             InfluxDbAuthenticateToken = appConfiguration.InfluxDbAuthenticateToken
         };
 
-        ConsoleLogger.Info("Current Version: 1.2.0");
+        ConsoleLogger.Info("Current Version: 1.3.0");
         ConsoleLogger.Debug($"Current output setting: {appConfiguration.OutputSetting}");
         ConsoleLogger.Debug($"InfluxDb {config.InfluxDbUrl}");
         ConsoleLogger.Debug($"Interval {config.IntervalSeconds} seconds");
@@ -40,17 +40,7 @@ app.OnExecuteAsync(async cancellationToken =>
 
         ConsoleLogger.Info($"Collect Metrics ...");
 
-        switch (appConfiguration.OutputSetting)
-        {
-            case OutputSettingEnum.Console:
-                await metricsCompositor.WriteSensorDataToConsole(cancellationToken).ConfigureAwait(false);
-                break;
-            case OutputSettingEnum.Influx:
-                await metricsCompositor.StartMetricCollectionLoop(cancellationToken).ConfigureAwait(false);
-                break;
-            default:
-                throw new System.ComponentModel.InvalidEnumArgumentException(nameof(appConfiguration.OutputSetting));
-        }
+        await metricsCompositor.StartMetricCollectionLoop(appConfiguration.OutputSetting, cancellationToken).ConfigureAwait(false);
     }
     catch (Exception e)
     {
