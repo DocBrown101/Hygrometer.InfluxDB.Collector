@@ -25,7 +25,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
 
             do
             {
-                (RelativeHumidity? hum, Temperature? temp) = await sensor.ReadHumidityAndTemperatureAsync().ConfigureAwait(false);
+                (var hum, var temp) = await this.sensor.ReadHumidityAndTemperatureAsync().ConfigureAwait(false);
                 isLastReadSuccessful = IsLastReadSuccessful(hum, temp);
 
                 if (isLastReadSuccessful)
@@ -50,12 +50,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
 
         private static bool IsLastReadSuccessful(RelativeHumidity? humidity, Temperature? temperature)
         {
-            if (humidity.HasValue && temperature.HasValue)
-            {
-                return true;
-            }
-
-            return false;
+            return humidity.HasValue && temperature.HasValue;
         }
     }
 }

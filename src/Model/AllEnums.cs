@@ -12,6 +12,7 @@
         BME280,
         BMP280,
         DHT22,
+        SHT3x,
         SHT4x,
         SI7021
     }
