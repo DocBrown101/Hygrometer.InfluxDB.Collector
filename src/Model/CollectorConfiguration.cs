@@ -1,12 +1,13 @@
-﻿namespace Hygrometer.InfluxDB.Collector
-{
-    using McMaster.Extensions.CommandLineUtils;
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using McMaster.Extensions.CommandLineUtils;
 
-    internal class AppConfiguration
+namespace Hygrometer.InfluxDB.Collector.Model
+{
+    public class CollectorConfiguration
     {
         public OutputSettingEnum OutputSetting => this.outputSetting.ParsedValue;
+        public IList<SensorType> Sensors => this.GetSensorTypes();
         public string Device => this.device.ParsedValue;
         public int IntervalSeconds => this.intervalSeconds.ParsedValue;
         public int MinimumDataPoints => this.minimumDataPoints.ParsedValue;
@@ -29,38 +30,40 @@
         private readonly CommandOption<string> influxDbMeasurement;
         private readonly CommandOption<string> influxDbAuthenticateToken;
 
-        public AppConfiguration(CommandLineApplication app)
+        public CollectorConfiguration(CommandLineApplication app)
         {
             this.outputSetting = app.Option<OutputSettingEnum>("-o|--output", "Console or Influx.", CommandOptionType.SingleValue);
-            this.outputSetting.DefaultValue = OutputSettingEnum.Console;
-
-            this.sensors = app.Option("-s|--sensor <SENSOR>", "All Sensors: BME280, BMP280, DHT22, Sht4x and Si7021", CommandOptionType.MultipleValue);
-
+            this.sensors = app.Option("-s|--sensor <SENSOR>", "All required sensors.", CommandOptionType.MultipleValue).Accepts(v => v.Values(Enum.GetNames(typeof(SensorType))));
             this.device = app.Option<string>("-d|--device", "InfluxDB Tag.", CommandOptionType.SingleValue);
-            this.device.DefaultValue = "Solar battery";
-
             this.intervalSeconds = app.Option<int>("-i|--interval", "The interval in seconds to request metrics.", CommandOptionType.SingleValue).Accepts(v => v.Range(10, 60));
-            this.intervalSeconds.DefaultValue = 30;
-
             this.minimumDataPoints = app.Option<int>("--minimumDataPoints", "Minimum number of data points for transmission.", CommandOptionType.SingleValue).Accepts(v => v.Range(1, 100));
-            this.minimumDataPoints.DefaultValue = 2;
-
             this.debugOutput = app.Option<bool>("--debugOutput", "Any debug output?", CommandOptionType.NoValue);
+
+            this.influxDbUrl = app.Option<string>("--influxDbUrl", "InfluxDb Url to be used.", CommandOptionType.SingleValue);
+            this.influxDbOrg = app.Option<string>("--influxDbOrg", "InfluxDb Org name to be used.", CommandOptionType.SingleValue);
+            this.influxDbBucket = app.Option<string>("--influxDbBucket", "InfluxDb Bucket name to be used.", CommandOptionType.SingleValue);
+            this.influxDbMeasurement = app.Option<string>("--influxDbMeasurement", "Prefix all metrics pushed into the InfluxDb.", CommandOptionType.SingleValue);
+            this.influxDbAuthenticateToken = app.Option<string>("--influxDbToken", "The InfluxDb Token.", CommandOptionType.SingleValue);
+
+            this.SetDefaultValues();
+        }
+
+        private void SetDefaultValues()
+        {
+            this.outputSetting.DefaultValue = OutputSettingEnum.Console;
+            this.device.DefaultValue = "Solar battery";
+            this.intervalSeconds.DefaultValue = 60;
+            this.minimumDataPoints.DefaultValue = 5;
             this.debugOutput.DefaultValue = false;
 
-            this.influxDbUrl = app.Option<string>("--influxDbUrl", "The InfluxDb Url. E.g. http://192.168.0.220:8088", CommandOptionType.SingleValue);
             this.influxDbUrl.DefaultValue = "http://192.168.0.220:8088";
-            this.influxDbOrg = app.Option<string>("--influxDbOrg", "The InfluxDb Org name.", CommandOptionType.SingleValue);
             this.influxDbOrg.DefaultValue = "home";
-            this.influxDbBucket = app.Option<string>("--influxDbBucket", "The InfluxDb Bucket name.", CommandOptionType.SingleValue);
-            this.influxDbBucket.DefaultValue = "solar";
-            this.influxDbMeasurement = app.Option<string>("--influxDbMeasurement", "Prefix all metrics pushed into the InfluxDb.", CommandOptionType.SingleValue);
+            this.influxDbBucket.DefaultValue = "minisolar";
             this.influxDbMeasurement.DefaultValue = "environment";
-            this.influxDbAuthenticateToken = app.Option<string>("--influxDbToken", "The InfluxDb Token.", CommandOptionType.SingleValue);
             this.influxDbAuthenticateToken.DefaultValue = "cx8rDqWJ3FrDhCei9onSGpndAQzEhSYPSjApXzCJK40hUIY6rYro_yrav18JNalQF25eBG3baR6fys9WPQio6w==";
         }
 
-        public IList<SensorType> GetSensorTypes()
+        private List<SensorType> GetSensorTypes()
         {
             var parsedSensors = new List<SensorType>();
 

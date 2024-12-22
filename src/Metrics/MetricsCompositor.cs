@@ -1,28 +1,23 @@
-﻿using Hygrometer.InfluxDB.Collector.Model;
-using Hygrometer.InfluxDB.Collector.Sensors;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Hygrometer.InfluxDB.Collector.Model;
+using Hygrometer.InfluxDB.Collector.Sensors;
 
 namespace Hygrometer.InfluxDB.Collector.Metrics
 {
-    public class MetricsCompositor
+    public class MetricsCompositor(IList<ISensorReader> sensorReaders, CollectorConfiguration configuration)
     {
-        private readonly IList<ISensorReader> sensorReaders;
-        private readonly MetricsConfiguration configuration;
-        private readonly PayloadClient payloadClient;
-
-        public MetricsCompositor(IList<ISensorReader> sensorReaders, MetricsConfiguration configuration)
-        {
-            this.sensorReaders = sensorReaders;
-            this.configuration = configuration;
-            this.payloadClient = new PayloadClient(configuration);
-        }
+        private readonly IList<ISensorReader> sensorReaders = sensorReaders;
+        private readonly CollectorConfiguration configuration = configuration;
+        private readonly PayloadClient payloadClient = new(configuration);
 
         public async Task StartMetricCollectionLoop(OutputSettingEnum output, CancellationToken ct)
         {
+            ConsoleLogger.Info($"Collect Metrics ...");
+
             while (!ct.IsCancellationRequested)
             {
                 var tasks = new List<Task> { Task.Delay(TimeSpan.FromSeconds(this.configuration.IntervalSeconds), ct) };
@@ -35,7 +30,7 @@ namespace Hygrometer.InfluxDB.Collector.Metrics
                     }
                     else
                     {
-                        tasks.Add(this.CreateSensorConsoleTask(sensorReader));
+                        tasks.Add(CreateSensorConsoleTask(sensorReader));
                     }
                 }
 
@@ -52,7 +47,7 @@ namespace Hygrometer.InfluxDB.Collector.Metrics
             this.payloadClient.AddAndTrySendPayload(sensorData);
         }
 
-        private async Task CreateSensorConsoleTask(ISensorReader sensorReader)
+        private static async Task CreateSensorConsoleTask(ISensorReader sensorReader)
         {
             var sensorData = await sensorReader.GetSensorData().ConfigureAwait(false);
             var sb = new StringBuilder($"{sensorData.SensorType} -> Temperature: {sensorData.DegreesCelsius} °C");

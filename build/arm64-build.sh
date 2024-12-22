@@ -1,5 +1,5 @@
 #! /bin/sh
-dotnet publish ./src/Hygrometer.InfluxDB.Collector.csproj \
+dotnet publish ../src/Hygrometer.InfluxDB.Collector.csproj \
 	   --runtime linux-arm64 \
 	   --self-contained false \
 	   -c Release \

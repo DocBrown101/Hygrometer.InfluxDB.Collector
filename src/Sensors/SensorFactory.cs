@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Hygrometer.InfluxDB.Collector.Model;
 
 namespace Hygrometer.InfluxDB.Collector.Sensors
 {
@@ -23,11 +24,12 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
             {
                 return sensorType switch
                 {
+                    SensorType.TEST => [new TestSensorReader()],
                     SensorType.BME280 => [new Bme280SensorReader()],
                     SensorType.BMP280 => [new Bmp280SensorReader()],
                     SensorType.DHT22 => [new Dht22SensorReader()],
-                    SensorType.Sht4x => [new Sht4xSensorReader()],
-                    SensorType.Si7021 => [new Si7021SensorReader()],
+                    SensorType.SHT4x => [new Sht4xSensorReader()],
+                    SensorType.SI7021 => [new Si7021SensorReader()],
                     _ => throw new ArgumentException("Not supported!"),
                 };
             }

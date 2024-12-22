@@ -1,4 +1,4 @@
-﻿namespace Hygrometer.InfluxDB.Collector
+﻿namespace Hygrometer.InfluxDB.Collector.Model
 {
     public enum OutputSettingEnum
     {
@@ -8,10 +8,11 @@
 
     public enum SensorType
     {
+        TEST,
         BME280,
         BMP280,
         DHT22,
-        Sht4x,
-        Si7021
+        SHT4x,
+        SI7021
     }
 }

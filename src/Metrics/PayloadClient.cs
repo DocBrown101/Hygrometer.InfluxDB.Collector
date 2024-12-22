@@ -1,22 +1,22 @@
-﻿using Hygrometer.InfluxDB.Collector.Model;
+﻿using System;
+using System.Collections.Generic;
+using Hygrometer.InfluxDB.Collector.Model;
 using InfluxDB.Client;
 using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Writes;
-using System;
-using System.Collections.Generic;
 
 namespace Hygrometer.InfluxDB.Collector.Metrics
 {
     public class PayloadClient
     {
-        private readonly MetricsConfiguration configuration;
+        private readonly CollectorConfiguration configuration;
         private readonly InfluxDBClient influxDBClient;
         private readonly List<PointData> pointDataList;
 
-        public PayloadClient(MetricsConfiguration configuration)
+        public PayloadClient(CollectorConfiguration configuration)
         {
             this.configuration = configuration;
-            this.pointDataList = new List<PointData>();
+            this.pointDataList = [];
 
             var builder = new InfluxDBClientOptions.Builder();
             builder.Url(configuration.InfluxDbUrl);
@@ -60,23 +60,16 @@ namespace Hygrometer.InfluxDB.Collector.Metrics
             {
                 try
                 {
-                    using (var writeApi = this.influxDBClient.GetWriteApi())
-                    {
-                        writeApi.WritePoints(this.pointDataList);
-                        writeApi.Flush();
+                    using var writeApi = this.influxDBClient.GetWriteApi();
+                    writeApi.WritePoints(this.pointDataList);
+                    writeApi.Flush();
 
-                        this.pointDataList.Clear();
-                        ConsoleLogger.Debug("InfluxDb write operation completed successfully");
-                    }
+                    this.pointDataList.Clear();
+                    ConsoleLogger.Debug("InfluxDb write operation completed successfully");
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    ConsoleLogger.Error(ex.Message);
-
-                    if (ex.InnerException != null)
-                    {
-                        ConsoleLogger.Error(ex.InnerException.Message);
-                    }
+                    ConsoleLogger.Error(e);
                 }
             }
         }

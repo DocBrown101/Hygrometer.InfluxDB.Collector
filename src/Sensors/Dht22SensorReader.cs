@@ -1,7 +1,7 @@
-﻿using Hygrometer.InfluxDB.Collector.Model;
-using Iot.Device.DHTxx;
-using System.Device.Gpio;
+﻿using System.Device.Gpio;
 using System.Threading.Tasks;
+using Hygrometer.InfluxDB.Collector.Model;
+using Iot.Device.DHTxx;
 using UnitsNet;
 
 namespace Hygrometer.InfluxDB.Collector.Sensors

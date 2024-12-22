@@ -1,11 +1,11 @@
-﻿namespace Hygrometer.InfluxDB.Collector.Sensors
-{
-    using Hygrometer.InfluxDB.Collector.Model;
-    using Iot.Device.Sht4x;
-    using System.Device.I2c;
-    using System.Threading.Tasks;
-    using UnitsNet;
+﻿using System.Device.I2c;
+using System.Threading.Tasks;
+using Hygrometer.InfluxDB.Collector.Model;
+using Iot.Device.Sht4x;
+using UnitsNet;
 
+namespace Hygrometer.InfluxDB.Collector.Sensors
+{
     public class Sht4xSensorReader : ISensorReader
     {
         private readonly Sht4x sensor;
@@ -41,7 +41,7 @@
 
             } while (!isLastReadSuccessful);
 
-            return new SensorData(SensorType.Sht4x)
+            return new SensorData(SensorType.SHT4x)
             {
                 DegreesCelsius = temperature.Value.DegreesCelsius,
                 HumidityInPercent = humidity.Value.Percent

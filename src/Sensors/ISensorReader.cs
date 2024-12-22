@@ -1,5 +1,5 @@
-﻿using Hygrometer.InfluxDB.Collector.Model;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Hygrometer.InfluxDB.Collector.Model;
 
 namespace Hygrometer.InfluxDB.Collector.Sensors
 {

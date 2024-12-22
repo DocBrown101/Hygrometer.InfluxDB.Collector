@@ -1,10 +1,10 @@
-﻿namespace Hygrometer.InfluxDB.Collector.Sensors
-{
-    using Hygrometer.InfluxDB.Collector.Model;
-    using Iot.Device.Si7021;
-    using System.Device.I2c;
-    using System.Threading.Tasks;
+﻿using System.Device.I2c;
+using System.Threading.Tasks;
+using Hygrometer.InfluxDB.Collector.Model;
+using Iot.Device.Si7021;
 
+namespace Hygrometer.InfluxDB.Collector.Sensors
+{
     public class Si7021SensorReader : ISensorReader
     {
         private readonly Si7021 sensor;
@@ -18,7 +18,7 @@
 
         public Task<SensorData> GetSensorData()
         {
-            var sensorData = new SensorData(SensorType.Si7021)
+            var sensorData = new SensorData(SensorType.SI7021)
             {
                 DegreesCelsius = this.sensor.Temperature.DegreesCelsius,
                 HumidityInPercent = this.sensor.Humidity.Percent

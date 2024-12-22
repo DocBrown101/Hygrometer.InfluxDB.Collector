@@ -1,9 +1,9 @@
-﻿using Hygrometer.InfluxDB.Collector.Model;
+﻿using System.Device.I2c;
+using System.Threading.Tasks;
+using Hygrometer.InfluxDB.Collector.Model;
 using Iot.Device.Bmxx80;
 using Iot.Device.Bmxx80.PowerMode;
 using Iot.Device.Bmxx80.ReadResult;
-using System.Device.I2c;
-using System.Threading.Tasks;
 using UnitsNet;
 
 namespace Hygrometer.InfluxDB.Collector.Sensors

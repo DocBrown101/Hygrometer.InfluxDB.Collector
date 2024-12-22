@@ -6,14 +6,11 @@ namespace Hygrometer.InfluxDB.Collector
     {
         private static bool writeDebug;
 
-        public static void SetDebugOutput(bool enableDebug)
+        public static void Init(bool enableDebugOutput, string version)
         {
-            writeDebug = enableDebug;
+            writeDebug = enableDebugOutput;
 
-            if (writeDebug)
-            {
-                Debug("Debug output has been enabled!");
-            }
+            Info($"Current Version: {version}");
         }
 
         public static void Info(string message)
@@ -41,22 +38,24 @@ namespace Hygrometer.InfluxDB.Collector
         {
             var oldForeground = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.Error.WriteLine($"{DateTime.Now:o} {prefix} {message}");
+            Console.WriteLine($"{DateTime.Now:o} {prefix} {message}");
             Console.ForegroundColor = oldForeground;
         }
 
-        public static void Exception(Exception ex)
+        public static void Error(Exception exception)
         {
-            Error(ex.Message, "EXCEPTION");
+            Error(exception.Message, "EXCEPTION");
 
             if (writeDebug)
             {
-                Error(ex.StackTrace, "StackTrace");
+                Error(exception.StackTrace, "StackTrace");
             }
 
-            if (ex.InnerException != null)
+            var innerException = exception.InnerException;
+            while (innerException != null)
             {
-                Error(ex.InnerException.Message, "INNEREXCEPTION");
+                Error(innerException.Message, "INNEREXCEPTION");
+                innerException = innerException.InnerException;
             }
         }
     }

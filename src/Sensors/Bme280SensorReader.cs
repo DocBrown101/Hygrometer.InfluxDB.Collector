@@ -1,13 +1,13 @@
-﻿namespace Hygrometer.InfluxDB.Collector.Sensors
-{
-    using Hygrometer.InfluxDB.Collector.Model;
-    using Iot.Device.Bmxx80;
-    using Iot.Device.Bmxx80.PowerMode;
-    using Iot.Device.Bmxx80.ReadResult;
-    using System.Device.I2c;
-    using System.Threading.Tasks;
-    using UnitsNet;
+﻿using System.Device.I2c;
+using System.Threading.Tasks;
+using Hygrometer.InfluxDB.Collector.Model;
+using Iot.Device.Bmxx80;
+using Iot.Device.Bmxx80.PowerMode;
+using Iot.Device.Bmxx80.ReadResult;
+using UnitsNet;
 
+namespace Hygrometer.InfluxDB.Collector.Sensors
+{
     public class Bme280SensorReader : ISensorReader
     {
         private readonly Bme280 sensor;

@@ -2,7 +2,7 @@
   "profiles": {
     "Hygrometer.InfluxDB.Collector": {
       "commandName": "Project",
-      "commandLineArgs": "--debugOutput -s bme280 -s Sht4x"
+      "commandLineArgs": "--debugOutput -s TEST -o Influx -i 10"
     }
   }
 }
