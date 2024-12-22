@@ -10,7 +10,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
         {
             var sensorList = new List<ISensorReader>();
 
-            foreach (SensorType sensorType in sensorTypes)
+            foreach (var sensorType in sensorTypes)
             {
                 sensorList.AddRange(GetSensor(sensorType));
             }
@@ -28,6 +28,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
                     SensorType.BME280 => [new Bme280SensorReader()],
                     SensorType.BMP280 => [new Bmp280SensorReader()],
                     SensorType.DHT22 => [new Dht22SensorReader()],
+                    SensorType.SHT3x => [new Sht3xSensorReader()],
                     SensorType.SHT4x => [new Sht4xSensorReader()],
                     SensorType.SI7021 => [new Si7021SensorReader()],
                     _ => throw new ArgumentException("Not supported!"),
