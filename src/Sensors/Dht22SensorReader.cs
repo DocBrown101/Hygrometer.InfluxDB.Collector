@@ -1,5 +1,4 @@
-﻿using System.Device.Gpio;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Hygrometer.InfluxDB.Collector.Model;
 using Iot.Device.DHTxx;
 using UnitsNet;
@@ -16,7 +15,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
         /// <param name="gpioPin">Default GPIO pin</param>
         public Dht22SensorReader(int gpioPin = 23)
         {
-            this.sensor = new Dht22(gpioPin, PinNumberingScheme.Logical);
+            this.sensor = new Dht22(gpioPin);
         }
 
         public async Task<SensorData> GetSensorData()

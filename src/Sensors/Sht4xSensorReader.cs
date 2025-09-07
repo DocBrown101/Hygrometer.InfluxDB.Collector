@@ -12,9 +12,9 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
 
         public Sht4xSensorReader(int busId = 1, int deviceAddress = Sht4x.DefaultI2cAddress)
         {
-            var settings = new I2cConnectionSettings(busId, deviceAddress);
-            var device = I2cDevice.Create(settings);
+            var device = I2cDevice.Create(new I2cConnectionSettings(busId, deviceAddress));
             this.sensor = new Sht4x(device);
+            this.sensor.Reset();
         }
 
         public async Task<SensorData> GetSensorData()
@@ -27,7 +27,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
             {
                 (var hum, var temp) = await this.sensor.ReadHumidityAndTemperatureAsync().ConfigureAwait(false);
                 isLastReadSuccessful = IsLastReadSuccessful(hum, temp);
-
+                
                 if (isLastReadSuccessful)
                 {
                     temperature = temp.Value;
@@ -36,7 +36,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
                 }
                 else
                 {
-                    await Task.Delay(250).ConfigureAwait(false);
+                    await Task.Delay(200).ConfigureAwait(false);
                 }
 
             } while (!isLastReadSuccessful);
