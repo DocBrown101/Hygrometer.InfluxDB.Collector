@@ -5,7 +5,7 @@ dotnet publish ../src/Hygrometer.InfluxDB.Collector.csproj \
 	   -c Release \
 	   -v minimal \
 	   -o ./build \
-	   -f net8.0 \
+	   -f net9.0 \
 	   -p:PublishReadyToRun=false \
 	   -p:PublishSingleFile=true \
 	   -p:CopyOutputSymbolsToPublishDirectory=false \

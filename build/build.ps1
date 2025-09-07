@@ -8,7 +8,7 @@ dotnet publish "$PSScriptRoot\..\src\Hygrometer.InfluxDB.Collector.csproj" `
 	   -c Release `
 	   -v minimal `
 	   -o ./win-x64 `
-	   -f net8.0 `
+	   -f net9.0 `
 	   -p:PublishReadyToRun=false `
 	   -p:PublishSingleFile=true `
 	   -p:CopyOutputSymbolsToPublishDirectory=false `
@@ -21,7 +21,7 @@ dotnet publish "$PSScriptRoot\..\src\Hygrometer.InfluxDB.Collector.csproj" `
 	   -c Release `
 	   -v minimal `
 	   -o ./linux-arm64 `
-	   -f net8.0 `
+	   -f net9.0 `
 	   -p:PublishReadyToRun=false `
 	   -p:PublishSingleFile=true `
 	   -p:CopyOutputSymbolsToPublishDirectory=false `
