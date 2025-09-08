@@ -20,47 +20,48 @@ namespace Hygrometer.InfluxDB.Collector.Metrics
 
             while (!ct.IsCancellationRequested)
             {
-                var tasks = new List<Task> { Task.Delay(TimeSpan.FromSeconds(this.configuration.IntervalSeconds), ct) };
+                var delayTasks = Task.Delay(TimeSpan.FromSeconds(this.configuration.IntervalSeconds), ct);
+                var sensorTasks = new List<Task<SensorData>>();
 
                 foreach (var sensorReader in this.sensorReaders)
                 {
-                    if (output == OutputSettingEnum.Influx)
-                    {
-                        tasks.Add(this.CreateSensorPayloadTask(sensorReader));
-                    }
-                    else
-                    {
-                        tasks.Add(CreateSensorConsoleTask(sensorReader));
-                    }
+                    sensorTasks.Add(sensorReader.GetSensorData());
                 }
 
-                await Task.WhenAll(tasks).ConfigureAwait(false);
+                var sensorData = await Task.WhenAll(sensorTasks).ConfigureAwait(false);
+
+                ConsoleLogger.Debug($"Sensor data received!");
+
+                if (output == OutputSettingEnum.Influx)
+                {
+                    this.payloadClient.AddAndTrySendPayload(sensorData);
+                }
+                else
+                {
+                    WriteToConsole(sensorData);
+                }
+
+                await delayTasks.ConfigureAwait(false);
             }
         }
 
-        private async Task CreateSensorPayloadTask(ISensorReader sensorReader)
+        private static void WriteToConsole(IEnumerable<SensorData> sensorDataList)
         {
-            var sensorData = await sensorReader.GetSensorData().ConfigureAwait(false);
+            var sb = new StringBuilder();
 
-            ConsoleLogger.Debug($"Sensor data received: {sensorData.SensorType}");
-
-            this.payloadClient.AddAndTrySendPayload(sensorData);
-        }
-
-        private static async Task CreateSensorConsoleTask(ISensorReader sensorReader)
-        {
-            var sensorData = await sensorReader.GetSensorData().ConfigureAwait(false);
-            var sb = new StringBuilder($"{sensorData.SensorType} -> Temperature: {sensorData.DegreesCelsius} °C");
-
-            ConsoleLogger.Debug($"Sensor data received: {sensorData.SensorType}");
-
-            if (sensorData.Hectopascals.HasValue)
+            foreach (var sensorData in sensorDataList)
             {
-                sb.Append($", Pressure: {sensorData.Hectopascals} hPa");
-            }
-            if (sensorData.HumidityInPercent.HasValue)
-            {
-                sb.Append($", Humidity: {sensorData.HumidityInPercent} %");
+                sb.Append($"{sensorData.SensorType} -> Temperature: {sensorData.DegreesCelsius} °C");
+
+                if (sensorData.HumidityInPercent.HasValue)
+                {
+                    sb.Append($", Humidity: {sensorData.HumidityInPercent} %");
+                }
+                if (sensorData.Hectopascals.HasValue)
+                {
+                    sb.Append($", Pressure: {sensorData.Hectopascals} hPa");
+                }
+                sb.AppendLine();
             }
 
             Console.WriteLine(sb.ToString());

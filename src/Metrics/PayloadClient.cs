@@ -27,31 +27,34 @@ namespace Hygrometer.InfluxDB.Collector.Metrics
             this.influxDBClient = new InfluxDBClient(builder.Build());
         }
 
-        public void AddAndTrySendPayload(SensorData sensorData)
+        public void AddAndTrySendPayload(IEnumerable<SensorData> sensorDataList)
         {
-            this.AddPayload(sensorData);
+            this.AddPayload(sensorDataList);
             this.TrySendPayload();
         }
 
-        private void AddPayload(SensorData sensorData)
+        private void AddPayload(IEnumerable<SensorData> sensorDataList)
         {
-            var pointData = PointData.Measurement($"{this.configuration.InfluxDbMeasurement}")
-                .Tag("device", this.configuration.Device)
-                .Tag("sensor", sensorData.SensorType.ToString())
-                .Field("temperature_C", sensorData.DegreesCelsius)
-                .Timestamp(DateTime.UtcNow, WritePrecision.Ms);
-
-            if (sensorData.Hectopascals.HasValue)
+            foreach (var sensorData in sensorDataList)
             {
-                pointData = pointData.Field("hectopascal_H", sensorData.Hectopascals.Value);
-            }
+                var pointData = PointData.Measurement($"{this.configuration.InfluxDbMeasurement}")
+                                        .Tag("device", this.configuration.Device)
+                                        .Tag("sensor", sensorData.SensorType.ToString())
+                                        .Field("temperature_C", sensorData.DegreesCelsius)
+                                        .Timestamp(DateTime.UtcNow, WritePrecision.S);
 
-            if (sensorData.HumidityInPercent.HasValue)
-            {
-                pointData = pointData.Field("humidity_P", sensorData.HumidityInPercent.Value);
-            }
+                if (sensorData.Hectopascals.HasValue)
+                {
+                    pointData = pointData.Field("hectopascal_H", sensorData.Hectopascals.Value);
+                }
 
-            this.pointDataList.Add(pointData);
+                if (sensorData.HumidityInPercent.HasValue)
+                {
+                    pointData = pointData.Field("humidity_P", sensorData.HumidityInPercent.Value);
+                }
+
+                this.pointDataList.Add(pointData);
+            }
         }
 
         private void TrySendPayload()
