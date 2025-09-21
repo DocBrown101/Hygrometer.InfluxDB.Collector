@@ -12,7 +12,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
     {
         private readonly Bme280 sensor;
 
-        public Bme280SensorReader(int busId = 1, int deviceAddress = Bme280.DefaultI2cAddress)
+        public Bme280SensorReader(int busId = 1, int deviceAddress = Bme280.DefaultI2cAddress) // Default in HEX: 77
         {
             var i2cSettings = new I2cConnectionSettings(busId, deviceAddress);
             var i2cDevice = I2cDevice.Create(i2cSettings);
@@ -52,10 +52,12 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
 
             } while (!isLastReadSuccessful);
 
-            return new SensorData(SensorType.BME280) {
+            return new SensorData(nameof(this.sensor))
+            {
                 DegreesCelsius = temperature.Value.DegreesCelsius,
-                HumidityInPercent = humidity.Value.Percent, 
-                Hectopascals = pressure.Value.Hectopascals };
+                HumidityInPercent = humidity.Value.Percent,
+                Hectopascals = pressure.Value.Hectopascals
+            };
         }
 
         private static bool IsLastReadSuccessful(Bme280ReadResult result)

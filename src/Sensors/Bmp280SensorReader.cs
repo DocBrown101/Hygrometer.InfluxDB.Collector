@@ -12,7 +12,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
     {
         private readonly Bmp280 sensor;
 
-        public Bmp280SensorReader(int busId = 1, int deviceAddress = Bmp280.DefaultI2cAddress)
+        public Bmp280SensorReader(int busId = 1, int deviceAddress = Bmp280.DefaultI2cAddress) // Default in HEX: 77
         {
             var i2cSettings = new I2cConnectionSettings(busId, deviceAddress);
             var i2cDevice = I2cDevice.Create(i2cSettings);
@@ -49,7 +49,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
 
             } while (!isLastReadSuccessful);
 
-            return new SensorData(SensorType.BMP280)
+            return new SensorData(nameof(this.sensor))
             {
                 DegreesCelsius = temperature.Value.DegreesCelsius,
                 Hectopascals = pressure.Value.Hectopascals

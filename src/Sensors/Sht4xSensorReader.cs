@@ -10,7 +10,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
     {
         private readonly Sht4x sensor;
 
-        public Sht4xSensorReader(int busId = 1, int deviceAddress = Sht4x.DefaultI2cAddress)
+        public Sht4xSensorReader(int busId = 1, int deviceAddress = Sht4x.DefaultI2cAddress) // Default in HEX: 44
         {
             var device = I2cDevice.Create(new I2cConnectionSettings(busId, deviceAddress));
             this.sensor = new Sht4x(device);
@@ -41,7 +41,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
 
             } while (!isLastReadSuccessful);
 
-            return new SensorData(SensorType.SHT4x)
+            return new SensorData(nameof(this.sensor))
             {
                 DegreesCelsius = temperature.Value.DegreesCelsius,
                 HumidityInPercent = humidity.Value.Percent

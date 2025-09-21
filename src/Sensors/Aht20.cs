@@ -19,7 +19,7 @@ public class Aht20SensorReader : ISensorReader
 
     public Task<SensorData> GetSensorData()
     {
-        var sensorData = new SensorData(SensorType.Aht20)
+        var sensorData = new SensorData(nameof(this.sensor))
         {
             DegreesCelsius = this.sensor.GetTemperature().DegreesCelsius,
             HumidityInPercent = this.sensor.GetHumidity().Percent

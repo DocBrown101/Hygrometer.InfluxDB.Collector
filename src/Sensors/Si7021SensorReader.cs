@@ -11,14 +11,15 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
 
         public Si7021SensorReader()
         {
-            var i2cSettings = new I2cConnectionSettings(1, Si7021.DefaultI2cAddress);
+            var i2cSettings = new I2cConnectionSettings(1, Si7021.DefaultI2cAddress); // Default in HEX: 40
             var i2cDevice = I2cDevice.Create(i2cSettings);
             this.sensor = new Si7021(i2cDevice, Resolution.Resolution1);
         }
 
         public Task<SensorData> GetSensorData()
         {
-            var sensorData = new SensorData(SensorType.SI7021)
+            // var sensorData = new SensorData(SensorType.SI7021)
+            var sensorData = new SensorData(nameof(this.sensor))
             {
                 DegreesCelsius = this.sensor.Temperature.DegreesCelsius,
                 HumidityInPercent = this.sensor.Humidity.Percent

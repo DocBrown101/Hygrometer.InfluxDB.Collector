@@ -2,29 +2,14 @@
 
 namespace Hygrometer.InfluxDB.Collector.Model
 {
-    public class SensorData(SensorType sensorType)
+    public class SensorData(string sensorType)
     {
-        public SensorType SensorType { get; } = sensorType;
+        public string SensorType { get; } = sensorType;
 
-        private double degreesCelsius;
-        public double DegreesCelsius
-        {
-            get => this.degreesCelsius;
-            set => this.degreesCelsius = Math.Round(value, 1);
-        }
+        public double DegreesCelsius { get; set; }
 
-        private double? humidityInPercent;
-        public double? HumidityInPercent
-        {
-            get => this.humidityInPercent;
-            set => this.humidityInPercent = value.HasValue ? Math.Round(value.Value, 1) : null;
-        }
+        public double? HumidityInPercent { get; set; }
 
-        private double? hectopascals;
-        public double? Hectopascals
-        {
-            get => this.hectopascals;
-            set => this.hectopascals = value.HasValue ? Math.Round(value.Value, 1) : null;
-        }
+        public double? Hectopascals { get; set; }
     }
 }

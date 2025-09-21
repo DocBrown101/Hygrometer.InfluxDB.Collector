@@ -9,16 +9,19 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
     {
         private readonly Sht3x sensor;
 
-        public Sht3xSensorReader(int busId = 1, byte deviceAddress = (byte)I2cAddress.AddrLow)
+        public Sht3xSensorReader(int busId = 1, byte deviceAddress = (byte)I2cAddress.AddrLow) // Default in HEX: 44
         {
             var settings = new I2cConnectionSettings(busId, deviceAddress);
             var device = I2cDevice.Create(settings);
-            this.sensor = new Sht3x(device);
+            this.sensor = new Sht3x(device)
+            {
+                Resolution = Resolution.High
+            };
         }
 
         public Task<SensorData> GetSensorData()
         {
-            var sensorData = new SensorData(SensorType.SHT3x)
+            var sensorData = new SensorData(nameof(this.sensor))
             {
                 DegreesCelsius = this.sensor.Temperature.DegreesCelsius,
                 HumidityInPercent = this.sensor.Humidity.Percent

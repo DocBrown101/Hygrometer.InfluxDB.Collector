@@ -9,10 +9,11 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
         {
             await Task.Delay(1000);
 
-            return new SensorData(SensorType.TEST)
+            return new SensorData("TEST")
             {
                 DegreesCelsius = 22.818,
-                HumidityInPercent = 45.111
+                HumidityInPercent = 45.111,
+                Hectopascals = 653.321
             };
         }
     }
