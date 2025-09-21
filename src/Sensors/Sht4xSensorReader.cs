@@ -21,39 +21,25 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
 
         public async Task<SensorData> GetSensorData()
         {
-            Temperature? temperature = null;
-            RelativeHumidity? humidity = null;
-            bool isLastReadSuccessful;
+            RelativeHumidity? humidity;
+            Temperature? temperature;
 
             do
             {
-                (var hum, var temp) = await this.sensor.ReadHumidityAndTemperatureAsync().ConfigureAwait(false);
-                isLastReadSuccessful = IsLastReadSuccessful(hum, temp);
-                
-                if (isLastReadSuccessful)
-                {
-                    temperature = temp.Value;
-                    humidity = hum.Value;
-                    break;
-                }
-                else
+                (humidity, temperature) = await this.sensor.ReadHumidityAndTemperatureAsync().ConfigureAwait(false);
+
+                if (!humidity.HasValue || !temperature.HasValue)
                 {
                     ConsoleLogger.Debug($"Warning, sensor data from {this.sensorName} could not be read! Trying again...");
                     await Task.Delay(200).ConfigureAwait(false);
                 }
-
-            } while (!isLastReadSuccessful);
+            } while (!humidity.HasValue || !temperature.HasValue);
 
             return new SensorData(this.sensorName)
             {
                 DegreesCelsius = temperature.Value.DegreesCelsius,
                 HumidityInPercent = humidity.Value.Percent
             };
-        }
-
-        private static bool IsLastReadSuccessful(RelativeHumidity? humidity, Temperature? temperature)
-        {
-            return humidity.HasValue && temperature.HasValue;
         }
     }
 }

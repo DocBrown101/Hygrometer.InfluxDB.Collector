@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,14 +21,8 @@ namespace Hygrometer.InfluxDB.Collector.Metrics
 
             while (!ct.IsCancellationRequested)
             {
-                var delayTasks = Task.Delay(TimeSpan.FromSeconds(this.configuration.IntervalSeconds), ct);
-                var sensorTasks = new List<Task<SensorData>>();
-
-                foreach (var sensorReader in this.sensorReaders)
-                {
-                    sensorTasks.Add(sensorReader.GetSensorData());
-                }
-
+                var delayTask = Task.Delay(TimeSpan.FromSeconds(this.configuration.IntervalSeconds), ct);
+                var sensorTasks = this.sensorReaders.Select(reader => reader.GetSensorData()).ToArray();
                 var sensorData = await Task.WhenAll(sensorTasks).ConfigureAwait(false);
 
                 ConsoleLogger.Debug($"Sensor data received!");
@@ -41,7 +36,7 @@ namespace Hygrometer.InfluxDB.Collector.Metrics
                     WriteToConsole(sensorData);
                 }
 
-                await delayTasks.ConfigureAwait(false);
+                await delayTask.ConfigureAwait(false);
             }
         }
 

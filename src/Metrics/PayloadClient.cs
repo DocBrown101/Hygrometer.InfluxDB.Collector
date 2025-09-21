@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Hygrometer.InfluxDB.Collector.Model;
 using InfluxDB.Client;
 using InfluxDB.Client.Api.Domain;
@@ -27,19 +28,19 @@ namespace Hygrometer.InfluxDB.Collector.Metrics
             this.influxDBClient = new InfluxDBClient(builder.Build());
         }
 
-        public void AddAndTrySendPayload(IEnumerable<SensorData> sensorDataList)
+        public void AddAndTrySendPayload(IEnumerable<SensorData> sensorDataEnum)
         {
+            var sensorDataList = sensorDataEnum.ToList();
             this.AddPayload(sensorDataList);
-            this.TrySendPayload();
+            this.TrySendPayload(sensorDataList.Count);
         }
 
-        private void AddPayload(IEnumerable<SensorData> sensorDataList)
+        private void AddPayload(List<SensorData> sensorDataList)
         {
             foreach (var sensorData in sensorDataList)
             {
                 var pointData = PointData.Measurement($"{this.configuration.InfluxDbMeasurement}")
-                                        .Tag("device", this.configuration.Device)
-                                        .Tag("sensor", sensorData.SensorName.ToString())
+                                        .Tag("sensor", sensorData.SensorName)
                                         .Field("temperature_C", sensorData.DegreesCelsius)
                                         .Timestamp(DateTime.UtcNow, WritePrecision.S);
 
@@ -57,9 +58,9 @@ namespace Hygrometer.InfluxDB.Collector.Metrics
             }
         }
 
-        private void TrySendPayload()
+        private void TrySendPayload(int sensorCount)
         {
-            if (this.pointDataList.Count >= this.configuration.MinimumDataPoints)
+            if (this.pointDataList.Count >= (this.configuration.MinimumDataPoints * sensorCount))
             {
                 try
                 {

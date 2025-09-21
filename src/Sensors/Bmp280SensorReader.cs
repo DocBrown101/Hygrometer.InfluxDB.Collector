@@ -4,7 +4,6 @@ using Hygrometer.InfluxDB.Collector.Model;
 using Iot.Device.Bmxx80;
 using Iot.Device.Bmxx80.PowerMode;
 using Iot.Device.Bmxx80.ReadResult;
-using UnitsNet;
 
 namespace Hygrometer.InfluxDB.Collector.Sensors
 {
@@ -22,46 +21,30 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
                 PressureSampling = Sampling.Standard,
                 TemperatureSampling = Sampling.UltraHighResolution
             };
+            this.sensor.SetPowerMode(Bmx280PowerMode.Normal);
             this.sensorName = this.sensor.GetType().Name;
         }
 
         public async Task<SensorData> GetSensorData()
         {
-            this.sensor.SetPowerMode(Bmx280PowerMode.Forced);
-
-            Temperature? temperature = null;
-            Pressure? pressure = null;
-            bool isLastReadSuccessful;
+            Bmp280ReadResult result;
 
             do
             {
-                var result = await this.sensor.ReadAsync().ConfigureAwait(false);
-                isLastReadSuccessful = IsLastReadSuccessful(result);
+                result = await this.sensor.ReadAsync().ConfigureAwait(false);
 
-                if (isLastReadSuccessful)
-                {
-                    temperature = result.Temperature.Value;
-                    pressure = result.Pressure.Value;
-                    break;
-                }
-                else
+                if (!result.Temperature.HasValue || !result.Pressure.HasValue)
                 {
                     ConsoleLogger.Debug($"Warning, sensor data from {this.sensorName} could not be read! Trying again...");
                     await Task.Delay(100).ConfigureAwait(false);
                 }
-
-            } while (!isLastReadSuccessful);
+            } while (!result.Temperature.HasValue || !result.Pressure.HasValue);
 
             return new SensorData(this.sensorName)
             {
-                DegreesCelsius = temperature.Value.DegreesCelsius,
-                Hectopascals = pressure.Value.Hectopascals
+                DegreesCelsius = result.Temperature.Value.DegreesCelsius,
+                Hectopascals = result.Pressure.Value.Hectopascals
             };
-        }
-
-        private static bool IsLastReadSuccessful(Bmp280ReadResult result)
-        {
-            return result.Temperature.HasValue && result.Pressure.HasValue;
         }
     }
 }

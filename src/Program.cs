@@ -14,7 +14,7 @@ app.OnExecuteAsync(async cancellationToken =>
 {
     try
     {
-        ConsoleLogger.Init(config.DebugOutput, "1.4.5");
+        ConsoleLogger.Init(config.DebugOutput, "1.5.0");
         ConsoleLogger.Debug($"Current output setting: {config.OutputSetting}");
         ConsoleLogger.Debug($"InfluxDb {config.InfluxDbUrl}");
         ConsoleLogger.Debug($"Interval {config.IntervalSeconds} seconds");
