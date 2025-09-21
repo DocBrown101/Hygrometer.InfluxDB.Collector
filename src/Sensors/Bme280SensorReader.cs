@@ -11,6 +11,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
     public class Bme280SensorReader : ISensorReader
     {
         private readonly Bme280 sensor;
+        private readonly string sensorName;
 
         public Bme280SensorReader(int busId = 1, int deviceAddress = Bme280.DefaultI2cAddress) // Default in HEX: 77
         {
@@ -22,6 +23,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
                 HumiditySampling = Sampling.Standard,
                 TemperatureSampling = Sampling.UltraHighResolution
             };
+            this.sensorName = this.sensor.GetType().Name;
         }
 
         public async Task<SensorData> GetSensorData()
@@ -52,7 +54,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
 
             } while (!isLastReadSuccessful);
 
-            return new SensorData(nameof(this.sensor))
+            return new SensorData(this.sensorName)
             {
                 DegreesCelsius = temperature.Value.DegreesCelsius,
                 HumidityInPercent = humidity.Value.Percent,

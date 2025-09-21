@@ -39,7 +39,7 @@ namespace Hygrometer.InfluxDB.Collector.Metrics
             {
                 var pointData = PointData.Measurement($"{this.configuration.InfluxDbMeasurement}")
                                         .Tag("device", this.configuration.Device)
-                                        .Tag("sensor", sensorData.SensorType.ToString())
+                                        .Tag("sensor", sensorData.SensorName.ToString())
                                         .Field("temperature_C", sensorData.DegreesCelsius)
                                         .Timestamp(DateTime.UtcNow, WritePrecision.S);
 

@@ -8,6 +8,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors;
 internal class Mcp9808SensorReader : ISensorReader
 {
     private readonly Mcp9808 sensor;
+    private readonly string sensorName;
 
     public Mcp9808SensorReader(int i2cBusId = 1, int deviceAddress = Mcp9808.DefaultI2cAddress) // Default in HEX: 18
     {
@@ -16,11 +17,12 @@ internal class Mcp9808SensorReader : ISensorReader
 
         this.sensor = new Mcp9808(i2cDevice);
         this.sensor.Wake();
+        this.sensorName = this.sensor.GetType().Name;
     }
 
     public Task<SensorData> GetSensorData()
     {
-        var sensorData = new SensorData(nameof(this.sensor))
+        var sensorData = new SensorData(this.sensorName)
         {
             DegreesCelsius = this.sensor.Temperature.DegreesCelsius
         };

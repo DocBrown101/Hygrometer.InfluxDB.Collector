@@ -8,6 +8,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors;
 public class Aht20SensorReader : ISensorReader
 {
     private readonly Aht20 sensor;
+    private readonly string sensorName;
 
     public Aht20SensorReader(int i2cBusId = 1, int deviceAddress = Aht20.DefaultI2cAddress)
     {
@@ -15,11 +16,12 @@ public class Aht20SensorReader : ISensorReader
         var i2cDevice = I2cDevice.Create(i2cSettings);
 
         this.sensor = new Aht20(i2cDevice);
+        this.sensorName = this.sensor.GetType().Name;
     }
 
     public Task<SensorData> GetSensorData()
     {
-        var sensorData = new SensorData(nameof(this.sensor))
+        var sensorData = new SensorData(this.sensorName)
         {
             DegreesCelsius = this.sensor.GetTemperature().DegreesCelsius,
             HumidityInPercent = this.sensor.GetHumidity().Percent

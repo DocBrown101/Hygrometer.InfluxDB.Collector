@@ -33,7 +33,7 @@ namespace Hygrometer.InfluxDB.Collector.Model
         public CollectorConfiguration(CommandLineApplication app)
         {
             this.outputSetting = app.Option<OutputSettingEnum>("-o|--output", "Console or Influx.", CommandOptionType.SingleValue);
-            this.sensors = app.Option("-s|--sensor <SENSOR>", "All required sensors.", CommandOptionType.MultipleValue).Accepts(v => v.Values(Enum.GetNames(typeof(SensorType))));
+            this.sensors = app.Option("-s|--sensor <SENSOR>", "All required sensors.", CommandOptionType.MultipleValue).Accepts(v => v.Values(Enum.GetNames<SensorType>()));
             this.device = app.Option<string>("-d|--device", "InfluxDB Tag.", CommandOptionType.SingleValue);
             this.intervalSeconds = app.Option<int>("-i|--interval", "The interval in seconds to request metrics.", CommandOptionType.SingleValue).Accepts(v => v.Range(10, 60));
             this.minimumDataPoints = app.Option<int>("--minimumDataPoints", "Minimum number of data points for transmission.", CommandOptionType.SingleValue).Accepts(v => v.Range(1, 100));
