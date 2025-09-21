@@ -46,6 +46,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
                 }
                 else
                 {
+                    ConsoleLogger.Debug($"Warning, sensor data from {this.sensorName} could not be read! Trying again...");
                     await Task.Delay(100).ConfigureAwait(false);
                 }
 
@@ -60,12 +61,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
 
         private static bool IsLastReadSuccessful(Bmp280ReadResult result)
         {
-            if (result.Temperature.HasValue && result.Pressure.HasValue)
-            {
-                return true;
-            }
-
-            return false;
+            return result.Temperature.HasValue && result.Pressure.HasValue;
         }
     }
 }

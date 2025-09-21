@@ -38,6 +38,7 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
                 }
                 else
                 {
+                    ConsoleLogger.Debug($"Warning, sensor data from {this.sensorName} could not be read! Trying again...");
                     await Task.Delay(200).ConfigureAwait(false);
                 }
 

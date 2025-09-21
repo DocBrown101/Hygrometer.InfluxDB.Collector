@@ -20,7 +20,6 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
 
         public Task<SensorData> GetSensorData()
         {
-            // var sensorData = new SensorData(SensorType.SI7021)
             var sensorData = new SensorData(this.sensorName)
             {
                 DegreesCelsius = this.sensor.Temperature.DegreesCelsius,
