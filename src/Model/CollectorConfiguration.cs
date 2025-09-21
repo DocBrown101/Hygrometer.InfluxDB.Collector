@@ -60,7 +60,7 @@ namespace Hygrometer.InfluxDB.Collector.Model
             this.influxDbOrg.DefaultValue = "home";
             this.influxDbBucket.DefaultValue = "minisolar";
             this.influxDbMeasurement.DefaultValue = "environment";
-            this.influxDbAuthenticateToken.DefaultValue = "cx8rDqWJ3FrDhCei9onSGpndAQzEhSYPSjApXzCJK40hUIY6rYro_yrav18JNalQF25eBG3baR6fys9WPQio6w==";
+            this.influxDbAuthenticateToken.DefaultValue = "token";
         }
 
         private List<SensorType> GetSensorTypes()

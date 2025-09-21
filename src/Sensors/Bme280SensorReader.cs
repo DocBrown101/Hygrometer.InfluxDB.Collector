@@ -12,11 +12,6 @@ namespace Hygrometer.InfluxDB.Collector.Sensors
     {
         private readonly Bme280 sensor;
 
-        /// <summary>
-        /// Required parameters for an I2C communication
-        /// </summary>
-        /// <param name="busId">Default busId</param>
-        /// <param name="deviceAddress">Default device I2C address (i2cdetect -y 1)</param>
         public Bme280SensorReader(int busId = 1, int deviceAddress = Bme280.DefaultI2cAddress)
         {
             var i2cSettings = new I2cConnectionSettings(busId, deviceAddress);

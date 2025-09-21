@@ -51,11 +51,11 @@ namespace Hygrometer.InfluxDB.Collector.Metrics
 
             foreach (var sensorData in sensorDataList)
             {
-                sb.Append($"{sensorData.SensorType} -> Temperature: {sensorData.DegreesCelsius} °C");
+                sb.Append($"{sensorData.SensorType} -> Temperature: {sensorData.DegreesCelsius:F1} °C");
 
                 if (sensorData.HumidityInPercent.HasValue)
                 {
-                    sb.Append($", Humidity: {sensorData.HumidityInPercent} %");
+                    sb.Append($", Humidity: {sensorData.HumidityInPercent:F0} %");
                 }
                 if (sensorData.Hectopascals.HasValue)
                 {

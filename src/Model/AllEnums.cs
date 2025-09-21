@@ -9,9 +9,10 @@
     public enum SensorType
     {
         TEST,
+        Aht20,
         BME280,
         BMP280,
-        DHT22,
+        Mcp9808,
         SHT3x,
         SHT4x,
         SI7021
